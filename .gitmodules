@@ -1,0 +1,3 @@
+[submodule "mupen-lua-ugui"]
+	path = mupen-lua-ugui
+	url = https://github.com/Aurumaker72/mupen-lua-ugui
