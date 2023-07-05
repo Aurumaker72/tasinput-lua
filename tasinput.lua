@@ -109,10 +109,10 @@ local function deep_clone(obj, seen)
     return res
 end
 
-
+local grid_size = 32
 
 local initial_size = wgui.info()
-wgui.resize(initial_size.width + 250, initial_size.height)
+wgui.resize(initial_size.width + (grid_size * 8), initial_size.height)
 
 
 local joypad_data = {
@@ -133,48 +133,35 @@ local joypad_data = {
     L = false,
     start = false,
 }
-
-local function process_gui(input)
-    local function grid(x, y, x_span, y_span)
-        if not x_span then
-            x_span = 1
-        end
-        if not y_span then
-            y_span = 1
-        end
-
-        return {
-            x = initial_size.width + (30 * x),
-            y = 130 + (30 * y),
-            width = 30 * x_span,
-            height = 30 * y_span,
-        }
+local function grid(x, y, x_span, y_span)
+    if not x_span then
+        x_span = 1
+    end
+    if not y_span then
+        y_span = 1
     end
 
+    return {
+        x = initial_size.width + (grid_size * x),
+        y = (grid_size * y),
+        width = grid_size * x_span,
+        height = grid_size * y_span,
+    }
+end
+local function process_gui(input)
     Mupen_lua_ugui.joystick({
         uid = 0,
         is_enabled = true,
-        rectangle = {
-            x = initial_size.width,
-            y = 0,
-            width = 128,
-            height = 128,
-        },
+        rectangle = grid(0, 0, 4, 4),
         position = {
             x = remap(input.X, -128, 127, 0, 1),
             y = remap(-input.Y, -127, 128, 0, 1),
         },
     })
-
     input.X = Mupen_lua_ugui.spinner({
         uid = 1,
         is_enabled = true,
-        rectangle = {
-            x = initial_size.width + 128,
-            y = 0,
-            width = 60,
-            height = 23,
-        },
+        rectangle = grid(4, 0, 2),
         is_horizontal = true,
         value = input.X,
         minimum = -128,
@@ -184,12 +171,7 @@ local function process_gui(input)
     input.Y = Mupen_lua_ugui.spinner({
         uid = 2,
         is_enabled = true,
-        rectangle = {
-            x = initial_size.width + 128 + 62,
-            y = 0,
-            width = 60,
-            height = 23,
-        },
+        rectangle = grid(6, 0, 2),
         is_horizontal = false,
         value = input.Y,
         minimum = -127,
@@ -199,7 +181,7 @@ local function process_gui(input)
     input.A = Mupen_lua_ugui.toggle_button({
         uid = 3,
         is_enabled = true,
-        rectangle = grid(4, 0, 2),
+        rectangle = grid(4, 4, 2),
         text = "A",
         is_checked = input.A
     })
@@ -207,7 +189,7 @@ local function process_gui(input)
     input.B = Mupen_lua_ugui.toggle_button({
         uid = 4,
         is_enabled = true,
-        rectangle = grid(2, 0, 2),
+        rectangle = grid(2, 4, 2),
         text = "B",
         is_checked = input.B
     })
@@ -215,7 +197,7 @@ local function process_gui(input)
     input.Z = Mupen_lua_ugui.toggle_button({
         uid = 5,
         is_enabled = true,
-        rectangle = grid(3, 2, 2),
+        rectangle = grid(3, 6, 2),
         text = "Z",
         is_checked = input.Z
     })
@@ -223,7 +205,7 @@ local function process_gui(input)
     input.L = Mupen_lua_ugui.toggle_button({
         uid = 6,
         is_enabled = true,
-        rectangle = grid(1, 1),
+        rectangle = grid(1, 5),
         text = "L",
         is_checked = input.L
     })
@@ -231,7 +213,7 @@ local function process_gui(input)
     input.R = Mupen_lua_ugui.toggle_button({
         uid = 7,
         is_enabled = true,
-        rectangle = grid(6, 1),
+        rectangle = grid(6, 5),
         text = "R",
         is_checked = input.R
     })
@@ -239,7 +221,7 @@ local function process_gui(input)
     input.Cleft = Mupen_lua_ugui.toggle_button({
         uid = 8,
         is_enabled = true,
-        rectangle = grid(0, 1),
+        rectangle = grid(0, 5),
         text = "C<",
         is_checked = input.Cleft
     })
@@ -247,7 +229,7 @@ local function process_gui(input)
     input.Cright = Mupen_lua_ugui.toggle_button({
         uid = 9,
         is_enabled = true,
-        rectangle = grid(2, 1),
+        rectangle = grid(2, 5),
         text = "C>",
         is_checked = input.Cright
     })
@@ -255,7 +237,7 @@ local function process_gui(input)
     input.Cup = Mupen_lua_ugui.toggle_button({
         uid = 10,
         is_enabled = true,
-        rectangle = grid(1, 0),
+        rectangle = grid(1, 4),
         text = "C^",
         is_checked = input.Cup
     })
@@ -263,7 +245,7 @@ local function process_gui(input)
     input.Cdown = Mupen_lua_ugui.toggle_button({
         uid = 11,
         is_enabled = true,
-        rectangle = grid(1, 2),
+        rectangle = grid(1, 6),
         text = "Cv",
         is_checked = input.Cdown
     })
@@ -271,7 +253,7 @@ local function process_gui(input)
     input.left = Mupen_lua_ugui.toggle_button({
         uid = 12,
         is_enabled = true,
-        rectangle = grid(5, 1),
+        rectangle = grid(5, 5),
         text = "D<",
         is_checked = input.left
     })
@@ -279,7 +261,7 @@ local function process_gui(input)
     input.right = Mupen_lua_ugui.toggle_button({
         uid = 13,
         is_enabled = true,
-        rectangle = grid(7, 1),
+        rectangle = grid(7, 5),
         text = "D>",
         is_checked = input.right
     })
@@ -287,7 +269,7 @@ local function process_gui(input)
     input.up = Mupen_lua_ugui.toggle_button({
         uid = 14,
         is_enabled = true,
-        rectangle = grid(6, 0),
+        rectangle = grid(6, 4),
         text = "D^",
         is_checked = input.up
     })
@@ -295,7 +277,7 @@ local function process_gui(input)
     input.down = Mupen_lua_ugui.toggle_button({
         uid = 15,
         is_enabled = true,
-        rectangle = grid(6, 2),
+        rectangle = grid(6, 6),
         text = "Dv",
         is_checked = input.down
     })
